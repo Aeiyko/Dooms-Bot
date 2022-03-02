@@ -7,10 +7,13 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS,Intents.FLAGS.GUILD_M
 let admins = new Map();
 let doomsDayChannel = null;
 let doomingInterval = null;
+let doomingBegin = null;
+let doomingEnd = null;
 
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
-const HOURS = MINUTE * 60;
+const HOUR = MINUTE * 60;
+const DAY = HOUR * 24;
 
 const COMMANDS = [
 	{
@@ -39,7 +42,10 @@ const COMMANDS = [
 			message.reply("Yes master you order will be executed");
 			doomsDayChannel = await message.guild.channels.create("Dooms-Day");
 			doomsDayChannel.send("The dooms day has cum...");
-			doomingInterval = setInterval(dooming, 20 * SECOND);
+			doomingBegin = Date.now();
+			doomingEnd = new Date(doomingBegin);
+			doomingEnd.setMonth(doomingEnd.getMonth() + 1);
+			doomingInterval = setInterval(dooming, 7 * DAY);
 		},
 	},
 	{
@@ -110,11 +116,13 @@ async function apologize(guild){
         doomsDayChannel.delete();
 		doomsDayChannel = null;
 		doomingInterval = null;
+		doomingBegin = null;
+		doomingEnd = null;
     }, 10 * MINUTE);
 }
 
 function dooming(){
-    doomsDayChannel.send("The dooms day will cum... in pouet hours");
+    doomsDayChannel.send(`The dooms day will cum... the ${doomingEnd}`);
     doomsDayChannel.send("<3 @everyone  <3");
 }
 
